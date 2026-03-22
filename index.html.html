@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بروتوكول الـ 25 — زد أوزانك 25% في 6 أسابيع</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --black: #000;
+  --surface: #0a0a0a;
+  --blue: #1A8FE3;
+  --blue-light: #4DB8FF;
+  --blue-glow: rgba(26,143,227,0.3);
+  --text: #F5F5F5;
+  --muted: #666;
+  --border: rgba(255,255,255,0.07);
+}
+
+html { scroll-behavior: smooth; }
+body { font-family:'Cairo',sans-serif; background:var(--black); color:var(--text); overflow-x:hidden; }
+
+/* ── TICKER ── */
+.ticker { background:var(--blue); color:#000; font-size:12px; font-weight:700; padding:9px; overflow:hidden; white-space:nowrap; }
+.ticker-inner { display:inline-block; animation:ticker 25s linear infinite; }
+@keyframes ticker { 0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)} }
+
+/* ── NAV ── */
+nav {
+  padding:18px 48px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0;
+  background:rgba(0,0,0,0.95);
+  backdrop-filter:blur(20px);
+  z-index:100;
+}
+.nav-brand { font-size:18px; font-weight:900; letter-spacing:3px; color:var(--blue-light); display:flex; align-items:center; gap:10px; }
+.nav-brand svg { width:28px; height:28px; }
+.nav-cta {
+  background:var(--blue); color:#fff; border:none;
+  padding:10px 24px; border-radius:20px;
+  font-family:'Cairo',sans-serif; font-size:13px; font-weight:700;
+  cursor:pointer; text-decoration:none;
+  transition:all 0.2s;
+}
+.nav-cta:hover { background:var(--blue-light); color:#000; box-shadow:0 0 20px var(--blue-glow); }
+
+/* ── HERO ── */
+.hero {
+  min-height:92vh;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center;
+  padding:80px 48px;
+  position:relative;
+  overflow:hidden;
+}
+
+.hero-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(26,143,227,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(26,143,227,0.06) 0%, transparent 50%);
+}
+
+/* Animated grid lines */
+.hero-grid {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(26,143,227,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,143,227,0.04) 1px, transparent 1px);
+  background-size:60px 60px;
+  animation:grid-move 20s linear infinite;
+}
+@keyframes grid-move { 0%{transform:translateY(0)} 100%{transform:translateY(60px)} }
+
+.hero-content { position:relative; max-width:760px; }
+
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(26,143,227,0.1);
+  border:1px solid rgba(26,143,227,0.3);
+  color:var(--blue-light);
+  font-size:11px; font-weight:700; letter-spacing:2px;
+  padding:6px 18px; border-radius:20px;
+  margin-bottom:32px;
+  animation:fade-up 0.6s ease both;
+}
+.hero-eyebrow-dot { width:6px; height:6px; background:var(--blue); border-radius:50%; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-title {
+  font-size:72px; font-weight:900; line-height:1;
+  margin-bottom:12px;
+  animation:fade-up 0.6s 0.1s ease both;
+}
+.hero-title em { font-style:normal; color:var(--blue-light); display:block; font-size:88px; }
+
+.hero-sub {
+  font-size:20px; color:var(--muted); line-height:1.6;
+  margin-bottom:48px;
+  animation:fade-up 0.6s 0.2s ease both;
+}
+.hero-sub strong { color:var(--text); }
+
+.hero-price-block {
+  display:flex; align-items:center; justify-content:center; gap:16px;
+  margin-bottom:32px;
+  animation:fade-up 0.6s 0.3s ease both;
+}
+.price-old { font-size:20px; color:#444; text-decoration:line-through; }
+.price-new { font-size:52px; font-weight:900; color:var(--text); line-height:1; }
+.price-cur { font-size:18px; color:var(--muted); }
+.price-badge {
+  background:rgba(26,143,227,0.15);
+  border:1px solid rgba(26,143,227,0.3);
+  color:var(--blue-light);
+  font-size:12px; font-weight:700;
+  padding:6px 14px; border-radius:20px;
+}
+
+.hero-btn {
+  display:inline-block;
+  background:var(--blue); color:#fff;
+  padding:20px 56px; border-radius:14px;
+  font-family:'Cairo',sans-serif; font-size:18px; font-weight:900;
+  text-decoration:none; letter-spacing:0.5px;
+  transition:all 0.3s;
+  animation:fade-up 0.6s 0.4s ease both;
+  position:relative; overflow:hidden;
+}
+.hero-btn::after {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%);
+  transform:translateX(-100%);
+  transition:transform 0.5s;
+}
+.hero-btn:hover::after { transform:translateX(100%); }
+.hero-btn:hover {
+  transform:translateY(-3px);
+  box-shadow:0 12px 40px var(--blue-glow), 0 0 60px rgba(26,143,227,0.2);
+}
+
+.hero-trust {
+  display:flex; gap:24px; justify-content:center;
+  font-size:13px; color:var(--muted);
+  margin-top:24px;
+  animation:fade-up 0.6s 0.5s ease both;
+}
+.hero-trust span { display:flex; align-items:center; gap:6px; }
+.hero-trust span::before { content:'✓'; color:var(--blue); font-weight:700; }
+
+@keyframes fade-up { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── PROBLEM SECTION ── */
+.section { padding:80px 48px; }
+.section-label { font-size:11px; letter-spacing:3px; color:var(--blue); font-weight:700; margin-bottom:12px; }
+.section-title { font-size:40px; font-weight:900; margin-bottom:48px; }
+.section-title span { color:var(--blue-light); }
+
+.problems-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+.problem-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px; padding:28px;
+  transition:all 0.3s;
+}
+.problem-card:hover { border-color:rgba(220,50,50,0.3); transform:translateY(-4px); }
+.problem-icon { font-size:28px; margin-bottom:14px; }
+.problem-title { font-size:16px; font-weight:700; color:#ff6b6b; margin-bottom:8px; }
+.problem-desc { font-size:14px; color:var(--muted); line-height:1.7; }
+
+/* ── WHAT'S INSIDE ── */
+.inside-section { padding:80px 48px; background:var(--surface); }
+.inside-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:48px; }
+.inside-card {
+  background:#000;
+  border:1px solid var(--border);
+  border-radius:16px; padding:28px;
+  transition:all 0.3s;
+}
+.inside-card:hover { border-color:var(--blue); transform:translateY(-6px); box-shadow:0 20px 40px var(--blue-glow); }
+.inside-num { font-size:11px; letter-spacing:2px; color:var(--blue); font-weight:700; margin-bottom:12px; }
+.inside-title { font-size:17px; font-weight:700; margin-bottom:10px; }
+.inside-desc { font-size:13px; color:var(--muted); line-height:1.7; }
+
+/* ── SCHEDULE PREVIEW ── */
+.schedule-section { padding:80px 48px; }
+.week-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:48px; }
+.week-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px; padding:24px;
+  text-align:center;
+  transition:all 0.3s;
+}
+.week-card:hover { border-color:var(--blue); }
+.week-card.peak { border-color:var(--blue); background:rgba(26,143,227,0.06); }
+.week-num { font-size:11px; letter-spacing:2px; color:var(--muted); margin-bottom:8px; }
+.week-label { font-size:16px; font-weight:700; margin-bottom:6px; }
+.week-intensity { font-size:12px; color:var(--blue-light); }
+.week-bar {
+  height:4px; background:#111; border-radius:4px; margin-top:16px; overflow:hidden;
+}
+.week-bar-fill { height:100%; background:var(--blue); border-radius:4px; transition:width 1s ease; }
+
+/* ── TESTIMONIALS ── */
+.reviews-section { padding:80px 48px; background:var(--surface); }
+.reviews-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:48px; }
+.review-card {
+  background:#000; border:1px solid var(--border);
+  border-radius:16px; padding:28px;
+}
+.stars { color:#D4AF37; font-size:14px; margin-bottom:14px; letter-spacing:2px; }
+.review-text { font-size:14px; color:#F5F5F5; line-height:1.8; margin-bottom:16px; font-style:italic; }
+.reviewer { font-size:13px; font-weight:700; color:var(--blue-light); }
+
+/* ── CTA SECTION ── */
+.cta-section {
+  padding:120px 48px; text-align:center;
+  position:relative; overflow:hidden;
+}
+.cta-section::before {
+  content:'';
+  position:absolute;
+  width:800px; height:500px;
+  background:radial-gradient(ellipse, rgba(26,143,227,0.1) 0%, transparent 70%);
+  top:50%; left:50%; transform:translate(-50%,-50%);
+}
+.cta-title { font-size:52px; font-weight:900; margin-bottom:16px; position:relative; }
+.cta-title span { color:var(--blue-light); }
+.cta-sub { font-size:18px; color:var(--muted); margin-bottom:48px; position:relative; }
+.cta-price { font-size:64px; font-weight:900; position:relative; margin-bottom:32px; }
+.cta-price small { font-size:18px; color:var(--muted); font-weight:400; }
+.cta-btn {
+  display:inline-block;
+  background:var(--blue); color:#fff;
+  padding:22px 72px; border-radius:16px;
+  font-family:'Cairo',sans-serif; font-size:20px; font-weight:900;
+  text-decoration:none;
+  transition:all 0.3s; position:relative;
+}
+.cta-btn:hover {
+  background:var(--blue-light); color:#000;
+  transform:translateY(-4px);
+  box-shadow:0 16px 60px var(--blue-glow);
+}
+.cta-note { font-size:13px; color:var(--muted); margin-top:20px; position:relative; }
+
+/* ── FOOTER ── */
+footer {
+  padding:32px 48px;
+  border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:var(--muted);
+}
+.footer-brand { color:var(--blue-light); font-weight:700; letter-spacing:2px; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav { padding:16px 20px; }
+  .hero { padding:60px 20px; min-height:auto; }
+  .hero-title { font-size:48px; }
+  .hero-title em { font-size:56px; }
+  .section, .inside-section, .schedule-section, .reviews-section { padding:60px 20px; }
+  .problems-grid, .inside-grid, .week-cards, .reviews-grid { grid-template-columns:1fr; }
+  .cta-section { padding:80px 20px; }
+  .cta-title { font-size:36px; }
+  footer { flex-direction:column; gap:12px; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<div class="ticker">
+  <span class="ticker-inner">
+    ⚡ بروتوكول الـ 25 — زد أوزانك 25% في 6 أسابيع &nbsp;·&nbsp; PDF جاهز للتحميل فوراً &nbsp;·&nbsp; ضمان استرداد 7 أيام &nbsp;·&nbsp; للاعبين المتوسطين فقط &nbsp;·&nbsp;
+    ⚡ بروتوكول الـ 25 — زد أوزانك 25% في 6 أسابيع &nbsp;·&nbsp; PDF جاهز للتحميل فوراً &nbsp;·&nbsp; ضمان استرداد 7 أيام &nbsp;·&nbsp;
+  </span>
+</div>
+
+<nav>
+  <div class="nav-brand">
+    <img src="https://i.ibb.co/hRsk58hc/2025-09-19-062349-removebg-preview-removebg-preview.png" style="width:40px;height:40px;object-fit:contain;">
+    WAVE LIFT
+  </div>
+  <a href="#buy" class="nav-cta">احصل على البروتوكول ←</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      للاعبين المتوسطين · رفع الأثقال
+    </div>
+    <h1 class="hero-title">
+      زد أوزانك
+      <em>25%</em>
+    </h1>
+    <p class="hero-sub">
+      في <strong>6 أسابيع فقط</strong> — بروتوكول علمي يكسر الثبات التدريبي<br>
+      ويوصلك لأرقام ما تخيلتها
+    </p>
+    <div class="hero-price-block">
+      <span class="price-old">99 ريال</span>
+      <span class="price-new">49</span>
+      <span class="price-cur">ريال</span>
+      <span class="price-badge">عرض محدود</span>
+    </div>
+    <a href="#buy" class="hero-btn">احصل على البروتوكول الحين 🛒</a>
+    <div class="hero-trust">
+      <span>توصيل فوري</span>
+      <span>PDF جاهز</span>
+      <span>ضمان 7 أيام</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section">
+  <div class="section-label">المشكلة</div>
+  <div class="section-title">لماذا توقف <span>تقدمك؟</span></div>
+  <div class="problems-grid">
+    <div class="problem-card">
+      <div class="problem-icon">📉</div>
+      <div class="problem-title">أرقامك ما تتحسن</div>
+      <div class="problem-desc">تتدرب بانتظام لكن الأوزان نفسها منذ أشهر. الثبات التدريبي يضرب 90% من اللاعبين بعد السنة الأولى.</div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">🎲</div>
+      <div class="problem-title">زيادة عشوائية</div>
+      <div class="problem-desc">تزيد الوزن بناءً على الشعور لا الخطة — مرة تقفز كثيراً، مرة تتردد. بدون نظام لا نتيجة.</div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">😴</div>
+      <div class="problem-title">إرهاق بلا تعافي</div>
+      <div class="problem-desc">تظن أن التدريب أكثر = نتائج أفضل. الجسم يحتاج تفريغاً ذكياً عشان يبني قوة حقيقية.</div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">📋</div>
+      <div class="problem-title">بدون خطة واضحة</div>
+      <div class="problem-desc">تذهب للصالة وتفعل ما تشعر به — بدون تتبع أو هدف أسبوعي محدد.</div>
+    </div>
+  </div>
+
+  <!-- SOURCE BADGE 1 -->
+  <div style="margin-top:28px;display:flex;align-items:center;justify-content:center;gap:10px;background:#0D0D0D;border:1px solid rgba(26,143,227,0.2);border-radius:12px;padding:14px 24px;max-width:600px;margin-left:auto;margin-right:auto;">
+    <span style="font-size:16px;">🔬</span>
+    <span style="font-size:12px;color:#F5F5F5;">مصدر علمي:</span>
+    <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank" style="font-size:12px;color:#4DB8FF;font-weight:700;text-decoration:none;">PubMed — الثبات التدريبي وحلوله في NSCA ↗</a>
+  </div>
+</section>
+
+<!-- WHAT'S INSIDE -->
+<section class="inside-section">
+  <div class="section-label">ماذا تحصل</div>
+  <div class="section-title">كل ما <span>تحتاجه</span></div>
+  <div class="inside-grid">
+    <div class="inside-card">
+      <div class="inside-num">01</div>
+      <div class="inside-title">جدول 6 أسابيع كامل</div>
+      <div class="inside-desc">كل يوم محدد — التمرين، العدد، التكرارات، الراحة. لا تفكير، فقط تنفيذ.</div>
+    </div>
+    <div class="inside-card">
+      <div class="inside-num">02</div>
+      <div class="inside-title">نظام التحميل التدريجي</div>
+      <div class="inside-desc">متى تزيد الوزن، بكم، وكيف تحسب الـ 1RM بدقة. علم وليس تخمين.</div>
+    </div>
+    <div class="inside-card">
+      <div class="inside-num">03</div>
+      <div class="inside-title">أسبوع التفريغ الصح</div>
+      <div class="inside-desc">السر الذي يجهله معظم اللاعبين — كيف تتراجع عشان تقفز أعلى.</div>
+    </div>
+    <div class="inside-card">
+      <div class="inside-num">04</div>
+      <div class="inside-title">نصائح تغذية مباشرة</div>
+      <div class="inside-desc">البروتين، السعرات، التوقيت. بدون تعقيد — فقط ما يؤثر فعلاً على القوة.</div>
+    </div>
+    <div class="inside-card">
+      <div class="inside-num">05</div>
+      <div class="inside-title">6 أخطاء تمنع التقدم</div>
+      <div class="inside-desc">الأخطاء الأكثر شيوعاً عند اللاعبين المتوسطين — تجنبها وتتقدم بشكل مختلف.</div>
+    </div>
+    <div class="inside-card">
+      <div class="inside-num">06</div>
+      <div class="inside-title">يوم الاختبار النهائي</div>
+      <div class="inside-desc">كيف تقيس تقدمك في نهاية الأسبوع السادس وتثبت لنفسك إنك تجاوزت الـ 25%.</div>
+    </div>
+  </div>
+
+  <!-- SOURCE BADGE 2 -->
+  <div style="margin-top:28px;display:flex;align-items:center;justify-content:center;gap:10px;background:#000;border:1px solid rgba(26,143,227,0.2);border-radius:12px;padding:14px 24px;max-width:600px;margin-left:auto;margin-right:auto;">
+    <span style="font-size:16px;">📄</span>
+    <span style="font-size:12px;color:#F5F5F5;">مصدر علمي:</span>
+    <a href="https://www.nsca.com/" target="_blank" style="font-size:12px;color:#4DB8FF;font-weight:700;text-decoration:none;">NSCA — Progressive Overload & Periodization ↗</a>
+  </div>
+</section>
+
+<!-- SCHEDULE PREVIEW -->
+<section class="schedule-section">
+  <div class="section-label">الخطة</div>
+  <div class="section-title">6 أسابيع — <span>3 مراحل</span></div>
+  <div class="week-cards">
+    <div class="week-card">
+      <div class="week-num">الأسابيع 1 - 2</div>
+      <div class="week-label">بناء القاعدة</div>
+      <div class="week-intensity">70% من الـ 1RM</div>
+      <div class="week-bar"><div class="week-bar-fill" style="width:70%"></div></div>
+    </div>
+    <div class="week-card">
+      <div class="week-num">الأسبوع 3</div>
+      <div class="week-label">رفع الحمل</div>
+      <div class="week-intensity">75-80% من الـ 1RM</div>
+      <div class="week-bar"><div class="week-bar-fill" style="width:80%"></div></div>
+    </div>
+    <div class="week-card">
+      <div class="week-num">الأسبوع 4</div>
+      <div class="week-label">أسبوع التفريغ</div>
+      <div class="week-intensity">60% — ضروري جداً</div>
+      <div class="week-bar"><div class="week-bar-fill" style="width:60%;background:#4DB8FF"></div></div>
+    </div>
+    <div class="week-card peak">
+      <div class="week-num">الأسبوع 5</div>
+      <div class="week-label">الذروة</div>
+      <div class="week-intensity">85-90% من الـ 1RM</div>
+      <div class="week-bar"><div class="week-bar-fill" style="width:90%"></div></div>
+    </div>
+    <div class="week-card peak">
+      <div class="week-num">الأسبوع 6</div>
+      <div class="week-label">أقصى شدة</div>
+      <div class="week-intensity">90%+ — يوم الاختبار</div>
+      <div class="week-bar"><div class="week-bar-fill" style="width:95%"></div></div>
+    </div>
+    <div class="week-card" style="border-color:var(--blue);background:rgba(26,143,227,0.05)">
+      <div class="week-num">النتيجة</div>
+      <div class="week-label" style="color:var(--blue-light);font-size:22px;">+25%</div>
+      <div class="week-intensity">أو أكثر في الـ 1RM</div>
+      <div class="week-bar"><div class="week-bar-fill" style="width:100%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews-section">
+  <div class="section-label">التقييمات</div>
+  <div class="section-title">ماذا قالوا <span>بعده</span></div>
+  <div class="reviews-grid">
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"كنت عالق على نفس الأوزان لـ 8 أشهر. بعد الأسبوع السادس رفعت سكوات زاد 30 كيلو. الجدول واضح وما يحتاج تفكير."</p>
+      <div class="reviewer">فهد · الرياض</div>
+    </div>
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"أسبوع التفريغ غيّر نظرتي للتدريب كلياً. ما كنت أصدق إن التراجع المؤقت يصنع هذا الفرق."</p>
+      <div class="reviewer">خالد · جدة</div>
+    </div>
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"ديدليفت زاد من 160 لـ 200 كيلو في 6 أسابيع. البروتوكول بسيط لكن مدروس. يستاهل أكثر من سعره."</p>
+      <div class="reviewer">سلطان · الدمام</div>
+    </div>
+  </div>
+</section>
+
+<!-- BUY -->
+<section class="cta-section" id="buy">
+  <div class="cta-title">جاهز تكسر <span>الثبات؟</span></div>
+  <p class="cta-sub">6 أسابيع من الحين، أرقامك لن تكون نفسها</p>
+  <div class="cta-price">49 <small>ريال</small></div>
+  <a href="https://httt.zid.store" target="_blank" class="cta-btn">احصل على البروتوكول الحين 🛒</a>
+  <p class="cta-note">توصيل فوري على بريدك · PDF جاهز للقراءة والطباعة · ضمان استرداد كامل خلال 7 أيام</p>
+</section>
+
+<!-- COMING SOON SHOE -->
+<section style="padding:80px 48px; background:var(--surface); text-align:center; position:relative; overflow:hidden;">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 50%, rgba(26,143,227,0.06) 0%, transparent 70%);"></div>
+  <div style="position:relative;">
+    <div style="display:inline-block;background:rgba(26,143,227,0.1);border:1px solid rgba(26,143,227,0.3);color:#4DB8FF;font-size:11px;font-weight:700;letter-spacing:3px;padding:6px 18px;border-radius:20px;margin-bottom:24px;">COMING SOON · قريباً</div>
+    <h2 style="font-size:40px;font-weight:900;margin-bottom:12px;">حذاء رفع الأثقال <span style="color:#4DB8FF;">Five Lite</span></h2>
+    <p style="font-size:16px;color:#F5F5F5;margin-bottom:48px;line-height:1.8;">الحذاء الاحترافي للرياضيين الجادين — نعل كربوني، حزام مزدوج، Galaxy Edition<br>قريباً في متجر WAVE LIFT</p>
+    <div style="position:relative;display:inline-block;margin-bottom:48px;">
+      <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+        <div style="position:relative;">
+          <div style="position:absolute;top:12px;right:12px;background:var(--blue);color:#000;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:1px;z-index:1;">قريباً</div>
+          <img src="https://i.ibb.co/6cXdr0S0/fd129a00182084ec920c240d9cb1d272919eefca.jpg" style="width:200px;height:200px;object-fit:cover;border-radius:16px;border:1px solid rgba(255,255,255,0.07);transition:transform 0.3s;display:block;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
+        </div>
+        <div style="position:relative;">
+          <div style="position:absolute;top:12px;right:12px;background:var(--blue);color:#000;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:1px;z-index:1;">قريباً</div>
+          <img src="https://i.ibb.co/pvMVHyxp/8c7bf1945dd3f849e8f2679a865a0a051db71e75.jpg" style="width:200px;height:200px;object-fit:cover;border-radius:16px;border:1px solid rgba(255,255,255,0.07);transition:transform 0.3s;display:block;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
+        </div>
+        <div style="position:relative;">
+          <div style="position:absolute;top:12px;right:12px;background:var(--blue);color:#000;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:1px;z-index:1;">قريباً</div>
+          <img src="https://i.ibb.co/dJbBFjdj/91c84026e36ad8af1b7cfcc4772c134d9398e3b0.jpg" style="width:200px;height:200px;object-fit:cover;border-radius:16px;border:1px solid rgba(255,255,255,0.07);transition:transform 0.3s;display:block;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">
+      <div style="background:#0D0D0D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px 24px;text-align:center;">
+        <div style="font-size:20px;margin-bottom:6px;">⚡</div>
+        <div style="font-size:13px;font-weight:700;">نعل كربوني</div>
+        <div style="font-size:11px;color:#F5F5F5;margin-top:4px;">ثبات احترافي</div>
+      </div>
+      <div style="background:#0D0D0D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px 24px;text-align:center;">
+        <div style="font-size:20px;margin-bottom:6px;">🔒</div>
+        <div style="font-size:13px;font-weight:700;">حزام مزدوج</div>
+        <div style="font-size:11px;color:#F5F5F5;margin-top:4px;">تثبيت قوي</div>
+      </div>
+      <div style="background:#0D0D0D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px 24px;text-align:center;">
+        <div style="font-size:20px;margin-bottom:6px;">✨</div>
+        <div style="font-size:13px;font-weight:700;">Galaxy Edition</div>
+        <div style="font-size:11px;color:#F5F5F5;margin-top:4px;">إصدار محدود</div>
+      </div>
+      <div style="background:#0D0D0D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px 24px;text-align:center;">
+        <div style="font-size:20px;margin-bottom:6px;">🏋️</div>
+        <div style="font-size:13px;font-weight:700;">كعب 22 ملم</div>
+        <div style="font-size:11px;color:#F5F5F5;margin-top:4px;">عمق أفضل</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOURCES -->
+<section style="padding:60px 48px; background:#000; border-top:1px solid rgba(255,255,255,0.07);">
+  <div style="max-width:800px; margin:0 auto;">
+    <div style="font-size:11px;letter-spacing:3px;color:#1A8FE3;font-weight:700;margin-bottom:16px;">المصادر العلمية</div>
+    <h3 style="font-size:22px;font-weight:700;margin-bottom:28px;">بروتوكول الـ 25 مبني على أبحاث موثقة</h3>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <a href="https://journals.lww.com/nsca-jscr/pages/default.aspx" target="_blank" style="display:flex;align-items:center;gap:16px;background:#0D0D0D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#1A8FE3'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+        <span style="font-size:20px;">📄</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#F5F5F5;margin-bottom:2px;">Journal of Strength and Conditioning Research</div>
+          <div style="font-size:11px;color:#4DB8FF;">Progressive Overload in Resistance Training · NSCA</div>
+        </div>
+        <span style="margin-right:auto;color:#1A8FE3;font-size:18px;">↗</span>
+      </a>
+      <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank" style="display:flex;align-items:center;gap:16px;background:#0D0D0D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#1A8FE3'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+        <span style="font-size:20px;">🔬</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#F5F5F5;margin-bottom:2px;">PubMed · National Library of Medicine</div>
+          <div style="font-size:11px;color:#4DB8FF;">Deload Week & Supercompensation Research</div>
+        </div>
+        <span style="margin-right:auto;color:#1A8FE3;font-size:18px;">↗</span>
+      </a>
+      <a href="https://www.nsca.com/" target="_blank" style="display:flex;align-items:center;gap:16px;background:#0D0D0D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#1A8FE3'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+        <span style="font-size:20px;">🏋️</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#F5F5F5;margin-bottom:2px;">NSCA — National Strength and Conditioning Association</div>
+          <div style="font-size:11px;color:#4DB8FF;">Essentials of Strength Training and Conditioning</div>
+        </div>
+        <span style="margin-right:auto;color:#1A8FE3;font-size:18px;">↗</span>
+      </a>
+      <a href="https://examine.com/" target="_blank" style="display:flex;align-items:center;gap:16px;background:#0D0D0D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#1A8FE3'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+        <span style="font-size:20px;">💊</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#F5F5F5;margin-bottom:2px;">Examine.com</div>
+          <div style="font-size:11px;color:#4DB8FF;">Protein Intake & Muscle Protein Synthesis Research</div>
+        </div>
+        <span style="margin-right:auto;color:#1A8FE3;font-size:18px;">↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-brand">WAVE LIFT</span>
+  <span>بروتوكول الـ 25 © 2026</span>
+  <span>🇸🇦 المملكة العربية السعودية</span>
+</footer>
+
+</body>
+</html>
