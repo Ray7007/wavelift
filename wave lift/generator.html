@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صمم جدولك — WAVE LIFT</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --black:#000000; --surface:rgba(255,255,255,0.04); --surface-hover:rgba(255,255,255,0.08);
+  --blue:#2196F3; --blue-light:#64B5F6; --blue-glow:rgba(33,150,243,0.3);
+  --text:#ffffff; --muted:#a0aab2; --border:rgba(255,255,255,0.08);
+}
+html { scroll-behavior:smooth; }
+body { font-family:'Cairo',sans-serif; background:var(--black); color:var(--text); min-height:100vh; }
+
+/* HEADER */
+.header {
+  padding:16px 32px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(0,0,0,0.95); backdrop-filter:blur(20px);
+  position:sticky; top:0; z-index:100;
+}
+.header-brand { font-size:16px; font-weight:900; letter-spacing:3px; color:var(--blue-light); }
+.header-back { color:var(--muted); font-size:13px; text-decoration:none; display:flex; align-items:center; gap:6px; transition:color 0.2s; }
+.header-back:hover { color:var(--blue-light); }
+
+/* PROGRESS BAR */
+.progress-wrap { padding:0 32px; background:var(--surface); border-bottom:1px solid var(--border); }
+.progress-steps { display:flex; overflow-x:auto; }
+.progress-step {
+  flex:1; padding:14px 8px; text-align:center;
+  font-size:12px; font-weight:700; color:var(--muted);
+  border-bottom:2px solid transparent; transition:all 0.2s;
+  white-space:nowrap; min-width:80px;
+}
+.progress-step.active { color:var(--blue-light); border-bottom-color:var(--blue); }
+.progress-step.done { color:var(--blue); }
+.progress-line { height:2px; background:var(--border); margin:0 32px; position:relative; }
+.progress-fill { height:100%; background:var(--blue); transition:width 0.4s ease; border-radius:2px; }
+
+/* MAIN */
+.main { max-width:720px; margin:0 auto; padding:40px 24px 80px; }
+
+/* STEP */
+.step { display:none; animation:fadeup 0.35s ease both; }
+.step.active { display:block; }
+@keyframes fadeup { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+.step-header { margin-bottom:32px; }
+.step-num { font-size:11px; letter-spacing:3px; color:var(--blue); font-weight:700; margin-bottom:8px; }
+.step-title { font-size:28px; font-weight:900; margin-bottom:8px; }
+.step-sub { font-size:14px; color:var(--muted); line-height:1.6; }
+
+/* OPTION CARDS */
+.options { display:grid; gap:12px; margin-bottom:32px; }
+.options.cols2 { grid-template-columns:1fr 1fr; }
+.options.cols3 { grid-template-columns:repeat(3,1fr); }
+
+.opt {
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:16px; padding:20px 16px;
+  cursor:pointer; transition:all 0.2s; text-align:center;
+  position:relative; overflow:hidden;
+}
+.opt:hover { border-color:var(--blue); background:rgba(26,143,227,0.05); transform:translateY(-2px); }
+.opt.sel { border-color:var(--blue); background:rgba(26,143,227,0.1); }
+.opt.sel::after {
+  content:'✓'; position:absolute; top:10px; left:10px;
+  width:22px; height:22px; background:var(--blue); color:#fff;
+  border-radius:50%; font-size:12px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+}
+.opt-icon { font-size:36px; margin-bottom:10px; }
+.opt-label { font-size:15px; font-weight:700; margin-bottom:4px; }
+.opt-desc { font-size:12px; color:var(--muted); line-height:1.5; }
+
+/* MULTI SELECT CHIPS */
+.chips { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:32px; }
+.chip-btn {
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:30px; padding:12px 20px;
+  font-family:'Cairo',sans-serif; font-size:14px; font-weight:700;
+  color:var(--text); cursor:pointer; transition:all 0.2s;
+}
+.chip-btn:hover { border-color:var(--blue); color:var(--blue-light); }
+.chip-btn.sel { background:rgba(26,143,227,0.12); border-color:var(--blue); color:var(--blue-light); }
+
+/* NAV BUTTONS */
+.nav-btns { display:flex; align-items:center; justify-content:space-between; margin-top:8px; }
+.btn-next {
+  background:var(--blue); color:#fff; border:none;
+  padding:16px 40px; border-radius:14px;
+  font-family:'Cairo',sans-serif; font-size:16px; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+}
+.btn-next:hover { background:var(--blue-light); color:#000; box-shadow:0 8px 24px var(--blue-glow); }
+.btn-next:disabled { opacity:0.3; cursor:not-allowed; background:var(--blue); color:#fff; }
+.btn-back {
+  background:transparent; color:var(--muted);
+  border:1.5px solid var(--border); padding:14px 28px; border-radius:12px;
+  font-family:'Cairo',sans-serif; font-size:14px; cursor:pointer; transition:all 0.2s;
+}
+.btn-back:hover { border-color:var(--blue); color:var(--text); }
+
+/* RESULT */
+.result-wrap { }
+.result-summary {
+  display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;
+}
+.sum-chip {
+  background:rgba(26,143,227,0.1); border:1px solid rgba(26,143,227,0.25);
+  color:var(--blue-light); font-size:11px; font-weight:700;
+  padding:5px 12px; border-radius:20px;
+}
+.result-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; padding:28px; margin-bottom:20px;
+}
+.loading { text-align:center; padding:48px 0; }
+.spinner { width:44px; height:44px; border:3px solid var(--border); border-top-color:var(--blue); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.loading p { font-size:14px; color:var(--muted); }
+.plan-text { font-size:14px; line-height:2.2; white-space:pre-wrap; color:var(--text); }
+
+/* BUY CARD */
+.buy-card {
+  background:linear-gradient(135deg,#000 0%,#050d18 100%);
+  border:1px solid rgba(26,143,227,0.3); border-radius:20px;
+  padding:32px; text-align:center; margin-top:20px;
+}
+.buy-card h3 { font-size:22px; font-weight:900; margin-bottom:8px; }
+.buy-card p { font-size:14px; color:var(--muted); margin-bottom:24px; line-height:1.7; }
+.buy-price { font-size:52px; font-weight:900; color:var(--text); margin-bottom:8px; }
+.buy-price small { font-size:18px; color:var(--muted); font-weight:400; }
+.buy-old { font-size:16px; color:#444; text-decoration:line-through; margin-bottom:24px; }
+.buy-btn {
+  display:inline-block; width:100%; max-width:400px;
+  padding:20px; background:var(--blue); color:#fff;
+  border-radius:14px; font-family:'Cairo',sans-serif;
+  font-size:18px; font-weight:700; text-decoration:none;
+  transition:all 0.3s;
+}
+.buy-btn:hover { background:var(--blue-light); color:#000; transform:translateY(-2px); box-shadow:0 10px 32px var(--blue-glow); }
+.buy-note { font-size:12px; color:var(--muted); margin-top:14px; }
+.buy-features { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:20px 0; font-size:13px; color:var(--text); }
+.buy-features span::before { content:'✓ '; color:var(--blue); font-weight:700; }
+
+.restart-btn { background:transparent; color:var(--muted); border:1px solid var(--border); padding:12px 28px; border-radius:12px; font-family:'Cairo',sans-serif; font-size:13px; cursor:pointer; transition:all 0.2s; margin-top:16px; display:block; width:100%; }
+.restart-btn:hover { border-color:var(--blue); color:var(--text); }
+
+@media(max-width:600px){
+  .main { padding:28px 16px 60px; }
+  .step-title { font-size:22px; }
+  .options.cols3 { grid-template-columns:1fr 1fr; }
+  .options.cols2 { grid-template-columns:1fr; }
+  .header { padding:14px 20px; }
+  .progress-wrap { padding:0 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <a href="javascript:history.back()" class="header-back">← رجوع</a>
+  <div class="header-brand">WAVE LIFT</div>
+  <div style="font-size:12px;color:var(--muted);">مجاناً ✦ ٤٩ ريال</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="progress-step active" id="tab1">الأيام</div>
+    <div class="progress-step" id="tab2">المستوى</div>
+    <div class="progress-step" id="tab3">الهدف</div>
+    <div class="progress-step" id="tab4">المدة</div>
+    <div class="progress-step" id="tab5">الأجهزة</div>
+    <div class="progress-step" id="tab6">جدولك</div>
+  </div>
+</div>
+<div class="progress-line"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- STEP 1: DAYS -->
+  <div class="step active" id="step1">
+    <div class="step-header">
+      <div class="step-num">الخطوة ١ من ٥</div>
+      <div class="step-title">كم يوم تتدرب أسبوعياً؟</div>
+      <div class="step-sub">اختر ما يناسب جدولك الأسبوعي</div>
+    </div>
+    <div class="options cols3">
+      <div class="opt" onclick="pick('days','2','يومان',this)">
+        <div class="opt-icon">📅</div>
+        <div class="opt-label">يومان</div>
+        <div class="opt-desc">خفيف ومناسب</div>
+      </div>
+      <div class="opt" onclick="pick('days','3','٣ أيام',this)">
+        <div class="opt-icon">📅</div>
+        <div class="opt-label">٣ أيام</div>
+        <div class="opt-desc">الأكثر شيوعاً</div>
+      </div>
+      <div class="opt" onclick="pick('days','4','٤ أيام',this)">
+        <div class="opt-icon">📅</div>
+        <div class="opt-label">٤ أيام</div>
+        <div class="opt-desc">تقسيم ممتاز</div>
+      </div>
+      <div class="opt" onclick="pick('days','5','٥ أيام',this)">
+        <div class="opt-icon">📅</div>
+        <div class="opt-label">٥ أيام</div>
+        <div class="opt-desc">تدريب متقدم</div>
+      </div>
+      <div class="opt" onclick="pick('days','6','٦ أيام',this)">
+        <div class="opt-icon">📅</div>
+        <div class="opt-label">٦ أيام</div>
+        <div class="opt-desc">للمحترفين</div>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <span></span>
+      <button class="btn-next" id="n1" onclick="next(1)" disabled>التالي ←</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: LEVEL -->
+  <div class="step" id="step2">
+    <div class="step-header">
+      <div class="step-num">الخطوة ٢ من ٥</div>
+      <div class="step-title">ما مستوى لياقتك؟</div>
+      <div class="step-sub">كن صادقاً — الجدول يتكيف معك</div>
+    </div>
+    <div class="options">
+      <div class="opt" onclick="pick('level','مبتدئ','مبتدئ',this)" style="display:flex;align-items:center;gap:16px;text-align:right;">
+        <div class="opt-icon" style="font-size:28px;">🌱</div>
+        <div>
+          <div class="opt-label">مبتدئ</div>
+          <div class="opt-desc">أقل من سنة تدريب — لم تبني عادة منتظمة بعد</div>
+        </div>
+      </div>
+      <div class="opt" onclick="pick('level','متوسط','متوسط',this)" style="display:flex;align-items:center;gap:16px;text-align:right;">
+        <div class="opt-icon" style="font-size:28px;">💪</div>
+        <div>
+          <div class="opt-label">متوسط</div>
+          <div class="opt-desc">١-٣ سنوات — تمارين أساسية تتقنها وأرقامك تتحسن</div>
+        </div>
+      </div>
+      <div class="opt" onclick="pick('level','متقدم','متقدم',this)" style="display:flex;align-items:center;gap:16px;text-align:right;">
+        <div class="opt-icon" style="font-size:28px;">🏆</div>
+        <div>
+          <div class="opt-label">متقدم</div>
+          <div class="opt-desc">أكثر من ٣ سنوات — تحتاج تحديات أعلى للتقدم</div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="back(2)">← رجوع</button>
+      <button class="btn-next" id="n2" onclick="next(2)" disabled>التالي ←</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: GOAL/TYPE -->
+  <div class="step" id="step3">
+    <div class="step-header">
+      <div class="step-num">الخطوة ٣ من ٥</div>
+      <div class="step-title">ما هدفك الرئيسي؟</div>
+      <div class="step-sub">الجدول يُبنى حول هدفك</div>
+    </div>
+    <div class="options cols2">
+      <div class="opt" onclick="pick('type','رفع أثقال','رفع أثقال',this)">
+        <div class="opt-icon">🏋️</div>
+        <div class="opt-label">بناء القوة</div>
+        <div class="opt-desc">رفع أثقال — عضلات وقوة</div>
+      </div>
+      <div class="opt" onclick="pick('type','كارديو','كارديو',this)">
+        <div class="opt-icon">🔥</div>
+        <div class="opt-label">حرق الدهون</div>
+        <div class="opt-desc">كارديو — رشاقة ولياقة</div>
+      </div>
+      <div class="opt" onclick="pick('type','مختلط','مختلط',this)">
+        <div class="opt-icon">⚡</div>
+        <div class="opt-label">قوة + رشاقة</div>
+        <div class="opt-desc">مختلط — الأفضل للأغلب</div>
+      </div>
+      <div class="opt" onclick="pick('type','وزن الجسم','وزن الجسم',this)">
+        <div class="opt-icon">🤸</div>
+        <div class="opt-label">وزن الجسم</div>
+        <div class="opt-desc">بدون أجهزة — في أي مكان</div>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="back(3)">← رجوع</button>
+      <button class="btn-next" id="n3" onclick="next(3)" disabled>التالي ←</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: DURATION -->
+  <div class="step" id="step4">
+    <div class="step-header">
+      <div class="step-num">الخطوة ٤ من ٥</div>
+      <div class="step-title">مدة كل جلسة؟</div>
+      <div class="step-sub">كم وقت عندك لكل تمرين</div>
+    </div>
+    <div class="options cols2">
+      <div class="opt" onclick="pick('duration','30','٣٠ دقيقة',this)">
+        <div class="opt-icon">⚡</div>
+        <div class="opt-label">٣٠ دقيقة</div>
+        <div class="opt-desc">سريع ومركز</div>
+      </div>
+      <div class="opt" onclick="pick('duration','45','٤٥ دقيقة',this)">
+        <div class="opt-icon">⏱️</div>
+        <div class="opt-label">٤٥ دقيقة</div>
+        <div class="opt-desc">الأنسب للأغلب</div>
+      </div>
+      <div class="opt" onclick="pick('duration','60','ساعة',this)">
+        <div class="opt-icon">⏰</div>
+        <div class="opt-label">ساعة كاملة</div>
+        <div class="opt-desc">جلسة شاملة</div>
+      </div>
+      <div class="opt" onclick="pick('duration','90','٩٠ دقيقة',this)">
+        <div class="opt-icon">🔥</div>
+        <div class="opt-label">٩٠ دقيقة</div>
+        <div class="opt-desc">للمتقدمين</div>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="back(4)">← رجوع</button>
+      <button class="btn-next" id="n4" onclick="next(4)" disabled>التالي ←</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: EQUIPMENT -->
+  <div class="step" id="step5">
+    <div class="step-header">
+      <div class="step-num">الخطوة ٥ من ٥</div>
+      <div class="step-title">الأجهزة المتاحة؟</div>
+      <div class="step-sub">اختر كل شي عندك — يمكن أكثر من واحد</div>
+    </div>
+    <div class="chips">
+      <button class="chip-btn" onclick="toggleEquip(this,'بار')">🏋️ بار</button>
+      <button class="chip-btn" onclick="toggleEquip(this,'دمبل')">💪 دمبل</button>
+      <button class="chip-btn" onclick="toggleEquip(this,'آلات الصالة')">⚙️ آلات الصالة</button>
+      <button class="chip-btn" onclick="toggleEquip(this,'وزن الجسم')">🤸 وزن الجسم</button>
+      <button class="chip-btn" onclick="toggleEquip(this,'كيبل')">🔗 كيبل</button>
+      <button class="chip-btn" onclick="toggleEquip(this,'مطاطات')">🟡 مطاطات</button>
+      <button class="chip-btn" onclick="toggleEquip(this,'TRX')">🪢 TRX</button>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="back(5)">← رجوع</button>
+      <button class="btn-next" id="n5" onclick="generate()" disabled>🤖 ولّد جدولي</button>
+    </div>
+  </div>
+
+  <!-- STEP 6: RESULT -->
+  <div class="step" id="step6">
+    <div class="step-header">
+      <div class="step-title">جدولك جاهز 🎉</div>
+    </div>
+    <div class="result-summary" id="chips"></div>
+    <div class="result-card">
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>الذكاء الاصطناعي يبني جدولك المخصص...</p>
+      </div>
+      <div id="planOut" style="display:none;">
+        <div class="plan-text" id="planText"></div>
+      </div>
+    </div>
+
+    <div class="buy-card" id="buyCard" style="display:none;">
+      <h3>احصل على النسخة الكاملة PDF</h3>
+      <p>جدولك الشخصي + نصائح تغذية + أخطاء تجنبها<br>قابل للطباعة والتطبيق من نفس اليوم</p>
+      <div class="buy-features">
+        <span>PDF كامل</span>
+        <span>توصيل فوري</span>
+        <span>ضمان ٧ أيام</span>
+      </div>
+      <div class="buy-price">49 <small>ريال</small></div>
+      <div class="buy-old">149 ريال</div>
+      <a href="https://httt.zid.store" target="_blank" class="buy-btn" id="buyBtn">اشتري واحصل على الجدول كاملاً 🛒</a>
+      <p class="buy-note">الدفع عبر مدى · STC Pay · Apple Pay</p>
+    </div>
+
+    <button class="restart-btn" onclick="restart()">← صمم جدول جديد</button>
+
+    <div class="buy-card" id="protocolCard" style="display:none; margin-top:24px; border-color:rgba(142, 120, 255, 0.4); background:linear-gradient(135deg,rgba(0,0,0,0.8),rgba(142, 120, 255, 0.05));">
+      <h3 style="color:var(--text);">جاهز تكسر الثبات؟</h3>
+      <p>بروتوكول الـ ٢٥ — زد أوزانك ٢٥٪ في ٦ أسابيع<br>جدول جاهز ومثبت علمياً للاعبين المتوسطين</p>
+      <div class="buy-features" style="color:var(--text);">
+        <span>PDF كامل</span>
+        <span>توصيل فوري</span>
+        <span>ضمان ٧ أيام</span>
+      </div>
+      <div class="buy-price">29 <small>ريال</small></div>
+      <div class="buy-old">99 ريال</div>
+      <a href="https://httt.zid.store" target="_blank" class="buy-btn" style="background:var(--surface-hover); border:1px solid rgba(142, 120, 255, 0.5); box-shadow:0 8px 24px rgba(142, 120, 255, 0.1);">احصل على البروتوكول الحين 🛒</a>
+      <p class="buy-note">خيار ممتاز وتوفيري كبديل للجدول المخصص</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const S = { days:'', level:'', type:'', duration:'', equipment:[] };
+const L = {};
+
+function pick(key, val, label, el) {
+  S[key] = val; L[key] = label;
+  el.closest('.options').querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('n' + {days:1,level:2,type:3,duration:4}[key]).disabled = false;
+}
+
+function toggleEquip(btn, val) {
+  btn.classList.toggle('sel');
+  if (btn.classList.contains('sel')) S.equipment.push(val);
+  else S.equipment = S.equipment.filter(e => e !== val);
+  document.getElementById('n5').disabled = S.equipment.length === 0;
+}
+
+const TOTAL = 5;
+function setProgress(step) {
+  document.querySelectorAll('.progress-step').forEach((t,i) => {
+    t.classList.remove('active','done');
+    if (i+1 === step) t.classList.add('active');
+    else if (i+1 < step) t.classList.add('done');
+  });
+  document.getElementById('progressFill').style.width = ((step-1)/TOTAL*100) + '%';
+}
+
+function next(s) {
+  document.getElementById('step'+s).classList.remove('active');
+  document.getElementById('step'+(s+1)).classList.add('active');
+  setProgress(s+1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function back(s) {
+  document.getElementById('step'+s).classList.remove('active');
+  document.getElementById('step'+(s-1)).classList.add('active');
+  setProgress(s-1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function generate() {
+  document.getElementById('step5').classList.remove('active');
+  document.getElementById('step6').classList.add('active');
+  setProgress(6);
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  const equip = S.equipment.join(' + ') || 'وزن الجسم';
+  const chipsEl = document.getElementById('chips');
+  chipsEl.innerHTML = [L.days, L.level, L.type, L.duration+' دقيقة', equip]
+    .map(t=>`<span class="sum-chip">${t}</span>`).join('');
+
+  setTimeout(() => {
+    const plan = buildPlan(S.days, S.level, S.type, equip, S.duration);
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('planOut').style.display = 'block';
+    document.getElementById('planText').textContent = plan;
+    document.getElementById('buyCard').style.display = 'block';
+    document.getElementById('protocolCard').style.display = 'block';
+    document.getElementById('buyBtn').href = 'https://httt.zid.store';
+  }, 1800);
+}
+
+function buildPlan(days, level, type, equip, dur) {
+  const sets = level==='مبتدئ' ? '٣' : level==='متوسط' ? '٤' : '٥';
+  const reps = type==='كارديو' ? '٢٠' : level==='متقدم' ? '٥' : '١٠';
+  const rest = level==='متقدم' ? '١٢٠' : '٩٠';
+
+  const exercises = {
+    'رفع أثقال': {
+      صدر: [`بنش برس | ${sets} × ${reps} | راحة ${rest} ث`, `دمبل فلاي | ٣ × ١٢ | راحة ٦٠ ث`, `ضغط على الآلة | ٣ × ١٢ | راحة ٦٠ ث`],
+      ظهر: [`ديدليفت | ${sets} × ${reps} | راحة ${rest} ث`, `روي بالبار | ٣ × ١٠ | راحة ٩٠ ث`, `لت بولداون | ٣ × ١٢ | راحة ٦٠ ث`],
+      أرجل: [`سكوات | ${sets} × ${reps} | راحة ${rest} ث`, `ليج برس | ٣ × ١٢ | راحة ٩٠ ث`, `ديدليفت رومانية | ٣ × ١٠ | راحة ٩٠ ث`],
+      أكتاف: [`أوفرهيد برس | ${sets} × ${reps} | راحة ${rest} ث`, `دمبل لترال رايز | ٣ × ١٥ | راحة ٦٠ ث`, `فيس بول | ٣ × ١٥ | راحة ٦٠ ث`],
+      ذراع: [`كيرل بار | ${sets} × ${reps} | راحة ٦٠ ث`, `ترايسبس بوش داون | ٣ × ١٢ | راحة ٦٠ ث`, `هامر كيرل | ٣ × ١٢ | راحة ٦٠ ث`],
+    },
+    'كارديو': {
+      كارديو1: [`ركض متوسط الشدة | ${dur} دقيقة | استراحة كل ١٠ دق`, `قفز حبل | ٣ × ٣ دقائق | راحة ٦٠ ث`, `برجر | ٤ × ١٥ | راحة ٤٥ ث`],
+      كارديو2: [`دراجة ثابتة | ${dur} دقيقة | مستوى متوسط`, `جامبينج جاك | ٤ × ٤٥ ث | راحة ٣٠ ث`, `سكوات قفز | ٣ × ١٥ | راحة ٦٠ ث`],
+      كارديو3: [`HIIT | ٢٠ ث شغل / ١٠ ث راحة × ٨`, `ماونتن كلايمبر | ٣ × ٣٠ ث`, `ركض مكانك | ٣ × ٦٠ ث | راحة ٤٥ ث`],
+    },
+    'مختلط': {
+      قوة1: [`سكوات | ${sets} × ${reps} | راحة ${rest} ث`, `بنش برس | ٣ × ١٠ | راحة ٩٠ ث`, `ركض | ١٠ دقائق | متوسط`],
+      قوة2: [`ديدليفت | ${sets} × ${reps} | راحة ${rest} ث`, `أوفرهيد برس | ٣ × ١٠ | راحة ٩٠ ث`, `برجر | ٣ × ١٥ | راحة ٤٥ ث`],
+      كارديو: [`HIIT | ٢٠ ث شغل / ١٠ ث راحة × ١٠`, `دراجة ثابتة | ٢٠ دقيقة`, `سكوات قفز | ٣ × ١٥ | راحة ٤٥ ث`],
+    },
+    'وزن الجسم': {
+      جزء1: [`ضغط | ${sets} × ${reps} | راحة ٦٠ ث`, `سكوات | ${sets} × ١٥ | راحة ٦٠ ث`, `برجر | ٣ × ١٢ | راحة ٤٥ ث`],
+      جزء2: [`عقلة | ${sets} × ${reps} | راحة ٩٠ ث`, `طيران | ٣ × ١٢ | راحة ٦٠ ث`, `بلانك | ٣ × ٤٥ ث`],
+      جزء3: [`لانج | ${sets} × ١٢ | راحة ٦٠ ث`, `دبس | ٣ × ١٠ | راحة ٦٠ ث`, `جلوت بريدج | ٣ × ١٥ | راحة ٤٥ ث`],
+    }
+  };
+
+  const dayNames = ['الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت','الأحد'];
+  const numDays = parseInt(days) || 3;
+  const typeKey = type === 'كارديو' ? 'كارديو' : type === 'وزن الجسم' ? 'وزن الجسم' : type === 'مختلط' ? 'مختلط' : 'رفع أثقال';
+  const exKeys = Object.keys(exercises[typeKey]);
+
+  const muscleNames = {
+    صدر:'صدر', ظهر:'ظهر + بايسبس', أرجل:'أرجل', أكتاف:'أكتاف', ذراع:'ذراع',
+    كارديو1:'كارديو إيروبك', كارديو2:'كارديو متنوع', كارديو3:'HIIT',
+    قوة1:'قوة + كارديو', قوة2:'قوة + كارديو', كارديو:'كارديو',
+    جزء1:'صدر + أرجل', جزء2:'ظهر + أكتاف', جزء3:'أرجل + أكتاف'
+  };
+
+  let plan = `🏋️ جدولك الأسبوعي الشخصي\n`;
+  plan += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  plan += `المستوى: ${level} | النوع: ${type} | المدة: ${dur} دقيقة\n`;
+  plan += `الأجهزة: ${equip}\n\n`;
+
+  let exIdx = 0;
+  for (let d = 0; d < 7; d++) {
+    const dayName = dayNames[d];
+    if (d < numDays) {
+      const key = exKeys[exIdx % exKeys.length];
+      const muscleName = muscleNames[key] || key;
+      plan += `📌 ${dayName} — ${muscleName}\n`;
+      const exList = exercises[typeKey][key];
+      exList.forEach((ex, i) => {
+        plan += `   ${i+1}. ${ex}\n`;
+      });
+      plan += '\n';
+      exIdx++;
+    } else {
+      plan += `😴 ${dayName} — راحة / إطالة خفيفة ١٠ دقائق\n\n`;
+    }
+  }
+
+  plan += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  plan += `⚡ نصائح لأفضل نتيجة:\n`;
+  plan += `   • سخّن ١٠ دقائق قبل كل جلسة\n`;
+  plan += `   • اشرب ٣ لتر ماء يومياً\n`;
+  plan += `   • البروتين ٢ غ لكل كيلو من وزنك\n`;
+  plan += `   • النوم ٧-٩ ساعات — العضلات تنمو أثناء النوم\n\n`;
+  plan += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  plan += `💡 هذا نموذج مبسط — احصل على النسخة الكاملة PDF\n`;
+  plan += `   مع جداول تفصيلية، صور التمارين، وخطة تغذية كاملة 👇`;
+
+  return plan;
+}
+
+function restart() {
+  S.days=''; S.level=''; S.type=''; S.duration=''; S.equipment=[];
+  Object.keys(L).forEach(k=>delete L[k]);
+  for(let i=1;i<=6;i++) document.getElementById('step'+i).classList.remove('active');
+  document.getElementById('step1').classList.add('active');
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  document.querySelectorAll('.chip-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('[id^=n]').forEach(b=>b.disabled=true);
+  document.getElementById('loading').style.display='block';
+  document.getElementById('loading').innerHTML='<div class="spinner"></div><p>الذكاء الاصطناعي يبني جدولك المخصص...</p>';
+  document.getElementById('planOut').style.display='none';
+  document.getElementById('buyCard').style.display='none';
+  document.getElementById('protocolCard').style.display='none';
+  setProgress(1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
